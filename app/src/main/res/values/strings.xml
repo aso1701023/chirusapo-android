@@ -5,6 +5,13 @@
         <item>男性</item>
         <item>女性</item>
     </string-array>
+    <string-array name="child_bloodType">
+        <item>血液型</item>
+        <item>A型</item>
+        <item>B型</item>
+        <item>O型</item>
+        <item>AB型</item>
+    </string-array>
     <string name="user_id">ユーザーID or メールアドレス</string>
     <string name="user_password">パスワード</string>
     <string name="user_login">ログイン</string>

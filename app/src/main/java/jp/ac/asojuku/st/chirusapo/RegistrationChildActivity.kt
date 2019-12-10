@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_registration_child.*
 import java.util.*
@@ -15,7 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import io.realm.Realm
 import io.realm.kotlin.where
 import jp.ac.asojuku.st.chirusapo.apis.*
-import kotlinx.android.synthetic.main.activity_check_growth.*
 import kotlinx.android.synthetic.main.activity_registration_child.child_clothesSize
 import kotlinx.android.synthetic.main.activity_registration_child.child_shoesSize
 import java.time.LocalDate
@@ -23,8 +23,8 @@ import java.time.Period
 import java.util.regex.Pattern
 
 class RegistrationChildActivity : AppCompatActivity() {
-    var gender = 0
-    var bloodType = 0
+    private var gender = 0
+    private var bloodType = 0
     private val calender = Calendar.getInstance()
     private val year = calender.get(Calendar.YEAR)
     private val month = calender.get(Calendar.MONTH)
@@ -32,8 +32,6 @@ class RegistrationChildActivity : AppCompatActivity() {
     private var VaccineNameData = arrayListOf<String>()
     private var VaccineDateData = arrayListOf<String>()
     private var AllergyData = arrayListOf<String>()
-
-    private val Allergyadapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, AllergyData)
 
     private var userIcon:Bitmap? = null
 
@@ -46,6 +44,7 @@ class RegistrationChildActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration_child)
+        Log.i("uri表示", "onCreate()")
 
 
         supportActionBar?.let {
@@ -67,6 +66,7 @@ class RegistrationChildActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.i("uri表示", "onResume()")
         Child_Birthday.isFocusable = false
         //性別選択
         Child_gender.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -119,7 +119,8 @@ class RegistrationChildActivity : AppCompatActivity() {
             birthday.setText("%s-%s-%s".format(year, month, day))
             //入力された誕生日から誕生日を計算して反映
             val today = LocalDate.now()
-            val Age = Period.between(LocalDate.parse(birthday.toString()), today).getYears()
+            val birthday = LocalDate.parse("%s-%s-%s".format(year, month, day))
+            var Age = Period.between(birthday, today).years.toString()
             Child_Age.setText(Age)
         }, year,month,day
         ).show()
@@ -222,11 +223,6 @@ class RegistrationChildActivity : AppCompatActivity() {
         }
     }
 
-    private fun onChildClothesSizeCheck(){
-        //服のサイズ選択
-
-    }
-
     private fun onChildShoesSizeCheck(): Boolean{
         val ChildShoes = child_shoesSize.editText?.text.toString().trim()
 
@@ -280,7 +276,7 @@ class RegistrationChildActivity : AppCompatActivity() {
             dialog.setView(myedit)
             dialog.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
                 // OKボタン押したときの処理
-                val VaccineNameText = myedit.getText().toString()
+                val VaccineNameText = myedit.text.toString()
                     //続いて日付の入力
                     DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
                         val year = y.toString()
@@ -303,6 +299,7 @@ class RegistrationChildActivity : AppCompatActivity() {
         }
     }
     private fun Allergy(){
+        val Allergyadapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, AllergyData)
         AllergyList.adapter = Allergyadapter
         val AllergyAdd = findViewById<Button>(R.id.AllergyData_Add)
         AllergyAdd.setOnClickListener {
@@ -312,7 +309,7 @@ class RegistrationChildActivity : AppCompatActivity() {
             dialog.setView(myedit)
             dialog.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
                 // OKボタン押したときの処理
-                val AllergyText = myedit.getText().toString()
+                val AllergyText = myedit.text.toString()
                 AllergyData.add(AllergyText)
             })
             dialog.setNegativeButton("キャンセル", null)
@@ -400,8 +397,12 @@ class RegistrationChildActivity : AppCompatActivity() {
             "clothes_size" to child_clothesSize.toString(),
             "shoes_size" to child_shoesSize.editText?.text.toString()
         )
+
         for(i in VaccineNameData){
-            val vaccination = arrayListOf<String>()
+
+            for (l in VaccineDateData){
+
+            }
 
         }
 

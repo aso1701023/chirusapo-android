@@ -12,6 +12,20 @@
         <item>O型</item>
         <item>AB型</item>
     </string-array>
+    <string-array name="clothes_size">
+        <item>服のサイズ</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+        <item>110</item>
+        <item>120</item>
+        <item>130</item>
+        <item>140</item>
+        <item>150</item>
+    </string-array>
     <string name="user_id">ユーザーID or メールアドレス</string>
     <string name="user_password">パスワード</string>
     <string name="user_login">ログイン</string>

@@ -26,12 +26,12 @@
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainPostAddActivity" />
-
+<!--        <activity android:name=".RegistrationChildActivity"/>-->
         <!--ログイン画面-->
-        <activity
-            android:name=".SignInActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".StartUpActivity">
+<!--        <activity-->
+<!--            android:name=".SignInActivity"-->
+<!--            android:theme="@style/AppTheme.NoActionBar" />-->
+        <activity android:name=".RegistrationChildActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

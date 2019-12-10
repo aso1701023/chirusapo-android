@@ -29,6 +29,8 @@ class RegistrationChildActivity : AppCompatActivity() {
     private val year = calender.get(Calendar.YEAR)
     private val month = calender.get(Calendar.MONTH)
     private val day = calender.get(Calendar.DAY_OF_MONTH)
+    private var VaccineNameData = arrayListOf<String>()
+    private var VaccineDateData = arrayListOf<String>()
     private var AllergyData = arrayListOf<String>()
 
     private val Allergyadapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, AllergyData)
@@ -220,34 +222,9 @@ class RegistrationChildActivity : AppCompatActivity() {
         }
     }
 
-    private fun onChildClothesSizeCheck(): Boolean{
-        val ChildClothes = child_clothesSize.editText?.text.toString().trim()
-        val ChildClothesNum = child_clothesSize.editText?.text.toString().toInt()
+    private fun onChildClothesSizeCheck(){
+        //服のサイズ選択
 
-        return when{
-            ChildClothes.isEmpty() -> {
-                child_clothesSize.error = "服のサイズが入力されていません"
-                false
-            }
-
-            ChildClothesNum%10 != 0 -> {
-                child_clothesSize.error = "服のサイズは10単位で入力してください"
-                false
-            }
-
-            ChildClothesNum > 160 -> {
-                child_clothesSize.error = "服のサイズは10以上160以下で入力してください"
-                false
-            }
-            ChildClothesNum < 10 -> {
-                child_clothesSize.error = "服のサイズは10以上160以下で入力してください"
-                false
-            }
-            else -> {
-                child_clothesSize.error = null
-                true
-            }
-        }
     }
 
     private fun onChildShoesSizeCheck(): Boolean{
@@ -290,8 +267,6 @@ class RegistrationChildActivity : AppCompatActivity() {
     }
 
     private fun Vaccine(){
-        var VaccineNameData = arrayListOf<String>()
-        var VaccineDateData = arrayListOf<String>()
         val VaccineNameAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineNameData)
         val VaccineDateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineDateData)
         val VaccineDateList = findViewById<ListView>(R.id.VaccineDateList)
@@ -307,20 +282,21 @@ class RegistrationChildActivity : AppCompatActivity() {
                 // OKボタン押したときの処理
                 val VaccineNameText = myedit.getText().toString()
                     //続いて日付の入力
-                DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
-                    val year = y.toString()
-                    var month = (m+1).toString()
-                    var day = d.toString()
-                    if(m < 9 ){
-                        month = "0$month"
-                    }
-                    if(d < 10){
-                        day = "0$day"
-                    }
-                    VaccineNameData.add(VaccineNameText)
-                    VaccineDateData.add("%s-%s-%s".format(year, month, day))
-                }, year,month,day
-                ).show()
+                    DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
+                        val year = y.toString()
+                        var month = (m+1).toString()
+                        var day = d.toString()
+                        if(m < 9 ){
+                            month = "0$month"
+                        }
+                        if(d < 10){
+                            day = "0$day"
+                        }
+                        VaccineNameData.add(VaccineNameText)
+                        VaccineDateData.add("%s-%s-%s".format(year, month, day))
+                    }, year,month,day
+                    ).show()
+                //ここまで日付
             })
             dialog.setNegativeButton("キャンセル", null)
             dialog.show()
@@ -383,10 +359,25 @@ class RegistrationChildActivity : AppCompatActivity() {
         if(!ChildIDCheck())check = false
         if(!onChildHeightCheck())check = false
         if(!onChildWeightCheck())check = false
-        if(!onChildClothesSizeCheck())check = false
         if(!onChildShoesSizeCheck())check = false
         if(!ChildBirthdayCheck())check = false
 
+        //服のサイズが未入力の場合(必要?)
+        child_clothesSize.onItemSelectedListener = object :AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                val spinner = findViewById<Spinner>(R.id.child_clothesSize)
+                when (spinner.selectedItem.toString()) {
+                    "服のサイズ" -> {
+                        Toast.makeText(applicationContext, "服のサイズが未入力です", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Toast.makeText(applicationContext, "服のサイズが未入力です", Toast.LENGTH_SHORT).show()
+                return
+            }
+        }
         if(!check)return
 
         val account: Account? = realm.where<Account>().findFirst()
@@ -394,23 +385,28 @@ class RegistrationChildActivity : AppCompatActivity() {
         val group_id = JoinGroup!!.Rgroup_id
         val token = account!!.Rtoken
 
+        //TODO ワクチン、アレルギー、アイコン情報の追加
         val params = hashMapOf(
             "token" to token,
             "group_id" to group_id,
             "user_name" to Child_Name.editText?.text.toString(),
             "user_id" to Child_Id.editText?.text.toString(),
-            "birthday" to child_birthday.text.toString().trim(),
+            "birthday" to Child_Birthday.text.toString().trim(),
             "age" to Child_Age.text.toString().trim(),
             "gender" to gender.toString(),
             "blood_type" to bloodType.toString(),
             "body_height" to Child_Height.editText?.text.toString(),
             "body_weight" to Child_Weight.editText?.text.toString(),
-            "clothes_size" to child_clothesSize.editText?.text.toString(),
+            "clothes_size" to child_clothesSize.toString(),
             "shoes_size" to child_shoesSize.editText?.text.toString()
-            //TODO ワクチン、アレルギー、アイコン情報の追加
         )
+        for(i in VaccineNameData){
+            val vaccination = arrayListOf<String>()
+
+        }
+
         val paramImage = arrayListOf<ApiParamImage>()
-        val paramArray = arrayListOf<ApiParam>()
+
         val paramItem = ApiParamImage("image/jpg","Child01.jpg","user_icon",userIcon!!)
         paramImage.add(paramItem)
 
@@ -424,10 +420,10 @@ class RegistrationChildActivity : AppCompatActivity() {
                     "200" -> {
                         // TODO realmにワクチン、アレルギーの登録
                         Toast.makeText(applicationContext, "登録しました", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, CheckGrowthActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                        startActivity(intent)
+//                        val intent = Intent(this, CheckGrowthActivity::class.java).apply {
+//                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+//                        }
+//                        startActivity(intent)
                     }
                     "400" -> {
                         val errorArray = it.getJSONArray("message")
@@ -470,7 +466,7 @@ class RegistrationChildActivity : AppCompatActivity() {
                                     ApiError.showEditTextError(Child_Weight,errorArray.getString(i))
                                 }
                                 ApiError.VALIDATION_CLOTHES_SIZE -> {
-                                    ApiError.showEditTextError(child_clothesSize,errorArray.getString(i))
+                                    ApiError.showToast(this,errorArray.getString(i), Toast.LENGTH_LONG)
                                 }
                                 ApiError.VALIDATION_SHOES_SIZE -> {
                                     ApiError.showEditTextError(child_shoesSize,errorArray.getString(i))

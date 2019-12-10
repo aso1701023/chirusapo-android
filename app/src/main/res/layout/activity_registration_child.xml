@@ -227,6 +227,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginBottom="20dp"
                         android:text="1以上150以下(小数点可)" />
 
                     <TextView
@@ -240,19 +241,19 @@
 
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
                 android:id="@+id/child_clothesSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:errorEnabled="true">
+                android:entries="@array/clothes_size" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="服のサイズ(cm)"
-                    android:inputType="number" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="※必須"
+                android:textColor="@android:color/holo_red_light" />
 
             <LinearLayout
                 android:layout_width="match_parent"

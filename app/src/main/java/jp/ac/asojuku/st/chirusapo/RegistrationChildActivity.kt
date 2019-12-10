@@ -1,34 +1,39 @@
 package jp.ac.asojuku.st.chirusapo
 
 import android.app.DatePickerDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.activity_child__add_.*
+import kotlinx.android.synthetic.main.activity_registration_child.*
 import java.util.*
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import io.realm.Realm
 import io.realm.kotlin.where
-import jp.ac.asojuku.st.chirusapo.apis.Api
-import jp.ac.asojuku.st.chirusapo.apis.ApiError
-import jp.ac.asojuku.st.chirusapo.apis.ApiParam
-import jp.ac.asojuku.st.chirusapo.apis.ApiPostTask
+import jp.ac.asojuku.st.chirusapo.apis.*
 import kotlinx.android.synthetic.main.activity_check_growth.*
-import kotlinx.android.synthetic.main.activity_child__add_.child_clothesSize
-import kotlinx.android.synthetic.main.activity_child__add_.child_shoesSize
+import kotlinx.android.synthetic.main.activity_registration_child.child_clothesSize
+import kotlinx.android.synthetic.main.activity_registration_child.child_shoesSize
 import java.time.LocalDate
 import java.time.Period
 import java.util.regex.Pattern
 
-class Child_Add_Activity : AppCompatActivity() {
+class RegistrationChildActivity : AppCompatActivity() {
     var gender = 0
     var bloodType = 0
     private val calender = Calendar.getInstance()
     private val year = calender.get(Calendar.YEAR)
     private val month = calender.get(Calendar.MONTH)
     private val day = calender.get(Calendar.DAY_OF_MONTH)
+    private var AllergyData = arrayListOf<String>()
+
+    private val Allergyadapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, AllergyData)
+
+    private var userIcon:Bitmap? = null
 
     companion object {
         const val READ_REQUEST_CODE = 3
@@ -38,11 +43,11 @@ class Child_Add_Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_child__add_)
+        setContentView(R.layout.activity_registration_child)
 
 
         supportActionBar?.let {
-            it.title = "子供情報追加"
+            it.title = "子供情報登録"
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
@@ -91,6 +96,8 @@ class Child_Add_Activity : AppCompatActivity() {
                 bloodType = 0
             }
         }
+        VaccineData_Add.setOnClickListener { Vaccine() }
+        AllergyData_Add.setOnClickListener { Allergy() }
         Child_Birthday.setOnClickListener { onBirthdaySetting() }
         ChildAdd_Button.setOnClickListener { onChildAdd() }
     }
@@ -282,13 +289,68 @@ class Child_Add_Activity : AppCompatActivity() {
         }
     }
 
+    private fun Vaccine(){
+        var VaccineNameData = arrayListOf<String>()
+        var VaccineDateData = arrayListOf<String>()
+        val VaccineNameAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineNameData)
+        val VaccineDateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineDateData)
+        val VaccineDateList = findViewById<ListView>(R.id.VaccineDateList)
+        VaccineNameList.adapter = VaccineNameAdapter
+        VaccineDateList.adapter = VaccineDateAdapter
+        val VaccineAdd = findViewById<Button>(R.id.VaccineData_Add)
+        VaccineAdd.setOnClickListener {
+            val myedit = EditText(this)
+            val dialog = AlertDialog.Builder(this)
+            dialog.setTitle("ワクチン名を入力してください")
+            dialog.setView(myedit)
+            dialog.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
+                // OKボタン押したときの処理
+                val VaccineNameText = myedit.getText().toString()
+                    //続いて日付の入力
+                DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
+                    val year = y.toString()
+                    var month = (m+1).toString()
+                    var day = d.toString()
+                    if(m < 9 ){
+                        month = "0$month"
+                    }
+                    if(d < 10){
+                        day = "0$day"
+                    }
+                    VaccineNameData.add(VaccineNameText)
+                    VaccineDateData.add("%s-%s-%s".format(year, month, day))
+                }, year,month,day
+                ).show()
+            })
+            dialog.setNegativeButton("キャンセル", null)
+            dialog.show()
+        }
+    }
+    private fun Allergy(){
+        AllergyList.adapter = Allergyadapter
+        val AllergyAdd = findViewById<Button>(R.id.AllergyData_Add)
+        AllergyAdd.setOnClickListener {
+            val myedit = EditText(this)
+            val dialog = AlertDialog.Builder(this)
+            dialog.setTitle("アレルギー名を入力してください")
+            dialog.setView(myedit)
+            dialog.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
+                // OKボタン押したときの処理
+                val AllergyText = myedit.getText().toString()
+                AllergyData.add(AllergyText)
+            })
+            dialog.setNegativeButton("キャンセル", null)
+            dialog.show()
+        }
+    }
+
     //画像選択の為にライブラリを開く
     private fun selectPhoto(){
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        val ChildIcon = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/*"
         }
-        startActivityForResult(intent, READ_REQUEST_CODE)
+        startActivityForResult(ChildIcon, READ_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -305,6 +367,7 @@ class Child_Add_Activity : AppCompatActivity() {
                         val image = BitmapFactory.decodeStream(inputStream)
                         var imageView = findViewById<ImageView>(R.id.imageView)
                         imageView.setImageBitmap(image)
+                        userIcon = image
                     }
                 } catch (e: Exception) {
                     Toast.makeText(this, "エラーが発生しました", Toast.LENGTH_LONG).show()
@@ -344,8 +407,12 @@ class Child_Add_Activity : AppCompatActivity() {
             "body_weight" to Child_Weight.editText?.text.toString(),
             "clothes_size" to child_clothesSize.editText?.text.toString(),
             "shoes_size" to child_shoesSize.editText?.text.toString()
-        //TODO ワクチン、アレルギー、アイコン情報の追加
+            //TODO ワクチン、アレルギー、アイコン情報の追加
         )
+        val paramImage = arrayListOf<ApiParamImage>()
+        val paramArray = arrayListOf<ApiParam>()
+        val paramItem = ApiParamImage("image/jpg","Child01.jpg","user_icon",userIcon!!)
+        paramImage.add(paramItem)
 
         ApiPostTask{
             if(it == null){
@@ -431,7 +498,7 @@ class Child_Add_Activity : AppCompatActivity() {
         }.execute(
             ApiParam(
                 Api.SLIM + "child/add",
-                params
+                params,paramImage
             )
         )
 

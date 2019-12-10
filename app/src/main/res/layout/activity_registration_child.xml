@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Child_Add_Activity">
+    tools:context=".RegistrationChildActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="ID"
+                        android:hint="子供ID"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,6 +134,7 @@
                     android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
                     android:text="※必須(年齢は誕生日から自動計算されます)"
                     android:textColor="@android:color/holo_red_light" />
 
@@ -143,6 +144,7 @@
                 android:id="@+id/Child_gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/activity_checkgrowth_listbutton"
                 android:entries="@array/user_genderItems"
                 android:spinnerMode="dropdown" />
@@ -309,10 +311,23 @@
                 android:background="@drawable/activity_checkgrowth_listbutton"
                 android:text="+" />
 
-            <ListView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/activity_checkgrowth_listbutton" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ListView
+                    android:id="@+id/VaccineNameList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/activity_checkgrowth_listbutton" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/VaccineDateList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView13"
@@ -321,13 +336,19 @@
                 android:text="アレルギー" />
 
             <Button
-                android:id="@+id/Allergy_Add"
-                android:layout_width="match_parent"
+                android:id="@+id/AllergyData_Add"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/activity_checkgrowth_listbutton"
                 android:text="+" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
+
             <ListView
+                android:id="@+id/AllergyList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/activity_checkgrowth_listbutton" />
@@ -338,7 +359,7 @@
                 android:layout_height="wrap_content"
                 android:text="アイコン" />
 
-            <CheckedTextView
+            <Button
                 android:id="@+id/Child_Icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -207,15 +207,6 @@ class SignUpActivity : AppCompatActivity() {
 
         if(!check)return
 
-        val param = hashMapOf(
-            "user_id" to user_id.editText?.text.toString(),
-            "user_name" to user_name.editText?.text.toString(),
-            "email" to user_email.editText?.text.toString(),
-            "password" to user_password.editText?.text.toString(),
-            "gender" to gender.toString(),
-            "birthday" to user_birthday.text.toString().trim()
-        )
-
         ApiPostTask{
             if(it == null){
                 //応答null
@@ -284,7 +275,14 @@ class SignUpActivity : AppCompatActivity() {
         }.execute(
             ApiParam(
                 Api.SLIM + "account/signup",
-                param
+                hashMapOf(
+                    "user_id" to user_id.editText?.text.toString(),
+                    "user_name" to user_name.editText?.text.toString(),
+                    "email" to user_email.editText?.text.toString(),
+                    "password" to user_password.editText?.text.toString(),
+                    "gender" to gender.toString(),
+                    "birthday" to user_birthday.text.toString().trim()
+                )
             )
         )
     }

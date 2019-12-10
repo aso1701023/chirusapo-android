@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(),
                 }
                 R.id.nav_logout -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
-                    signOut()
+                    signout()
                     return@setNavigationItemSelectedListener false
                 }
             }
@@ -587,7 +587,7 @@ class MainActivity : AppCompatActivity(),
         })
     }
     // ログアウト
-    private fun signOut(){
+    private fun signout(){
         //Dialog生成
         AlertDialog.Builder(this)
             .setTitle("ログアウトしますか？")
@@ -596,7 +596,6 @@ class MainActivity : AppCompatActivity(),
             ){_,_->
                 val account:Account? = realm.where<Account>().findFirst()
                 val token = account!!.Rtoken
-                val param = hashMapOf("token" to token)
                 ApiPostTask{
                     if(it==null){
                         //応答null
@@ -628,7 +627,7 @@ class MainActivity : AppCompatActivity(),
                 }.execute(
                     ApiParam(
                         Api.SLIM + "account/signout",
-                        param
+                        hashMapOf("token" to token)
                     )
                 )
             }

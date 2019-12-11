@@ -356,11 +356,12 @@
                 android:background="@drawable/activity_checkgrowth_listbutton"
                 android:text="+" />
 
-            <ListView
+            <LinearLayout
                 android:id="@+id/AllergyList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/activity_checkgrowth_listbutton" />
+                android:background="@drawable/activity_checkgrowth_listbutton"
+                android:orientation="vertical" />
 
             <TextView
                 android:id="@+id/textView15"

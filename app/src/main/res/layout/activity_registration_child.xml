@@ -17,7 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,8 +226,8 @@
                         android:id="@+id/textView23"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginBottom="20dp"
+                        android:layout_weight="1"
                         android:text="1以上150以下(小数点可)" />
 
                     <TextView
@@ -245,6 +245,7 @@
                 android:id="@+id/child_clothesSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/activity_checkgrowth_listbutton"
                 android:entries="@array/clothes_size" />
 
             <TextView
@@ -317,17 +318,29 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ListView
-                    android:id="@+id/VaccineNameList"
+                <LinearLayout
+                    android:id="@+id/vaccine_name_array"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/activity_checkgrowth_listbutton" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/VaccineDateList"
+                    <TextView
+                        android:id="@+id/vaccine_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/vaccine_date_array"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/vaccine_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
@@ -338,15 +351,10 @@
 
             <Button
                 android:id="@+id/AllergyData_Add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/activity_checkgrowth_listbutton"
                 android:text="+" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"></LinearLayout>
 
             <ListView
                 android:id="@+id/AllergyList"
@@ -370,7 +378,7 @@
                 android:textSize="24sp" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/ChildIcon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

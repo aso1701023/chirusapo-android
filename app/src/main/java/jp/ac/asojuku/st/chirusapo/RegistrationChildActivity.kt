@@ -1,13 +1,13 @@
 package jp.ac.asojuku.st.chirusapo
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_registration_child.*
 import java.util.*
@@ -21,17 +21,25 @@ import kotlinx.android.synthetic.main.activity_registration_child.child_shoesSiz
 import java.time.LocalDate
 import java.time.Period
 import java.util.regex.Pattern
+import android.widget.TextView
+import io.realm.RealmResults
+
 
 class RegistrationChildActivity : AppCompatActivity() {
+    lateinit var realm:Realm
+
     private var gender = 0
     private var bloodType = 0
     private val calender = Calendar.getInstance()
     private val year = calender.get(Calendar.YEAR)
     private val month = calender.get(Calendar.MONTH)
     private val day = calender.get(Calendar.DAY_OF_MONTH)
-    private var VaccineNameData = arrayListOf<String>()
-    private var VaccineDateData = arrayListOf<String>()
+
     private var AllergyData = arrayListOf<String>()
+
+
+
+    private var VaccineTextarray = 0
 
     private var userIcon:Bitmap? = null
 
@@ -39,20 +47,33 @@ class RegistrationChildActivity : AppCompatActivity() {
         const val READ_REQUEST_CODE = 3
     }
 
-    lateinit var realm: Realm
-
     override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration_child)
-        Log.i("uri表示", "onCreate()")
 
+        realm = Realm.getDefaultInstance()
+
+        val vaccine = realm.where<Vaccine>().findAll()
 
         supportActionBar?.let {
             it.title = "子供情報登録"
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeButtonEnabled(true)
         }
+        // idがdialogButtonのButtonを取得
+        val dialogBtn = findViewById<View>(R.id.VaccineData_Add) as Button
+        // clickイベント追加
+        dialogBtn.setOnClickListener {
+            // ダイアログクラスをインスタンス化
+            val dialog = VaccineName(vaccine)
+
+            // 表示  getFagmentManager()は固定、sampleは識別タグ
+            dialog.show()
+        }
+        AllergyData_Add.setOnClickListener { Allergy() }
         Child_Icon.setOnClickListener{selectPhoto()}
+        Child_Birthday.setOnClickListener { onBirthdaySetting() }
+        ChildAdd_Button.setOnClickListener { onChildAdd() }
     }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
@@ -66,7 +87,6 @@ class RegistrationChildActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.i("uri表示", "onResume()")
         Child_Birthday.isFocusable = false
         //性別選択
         Child_gender.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
@@ -98,10 +118,12 @@ class RegistrationChildActivity : AppCompatActivity() {
                 bloodType = 0
             }
         }
-        VaccineData_Add.setOnClickListener { Vaccine() }
-        AllergyData_Add.setOnClickListener { Allergy() }
-        Child_Birthday.setOnClickListener { onBirthdaySetting() }
-        ChildAdd_Button.setOnClickListener { onChildAdd() }
+    }
+
+
+    private fun setTextView(value: String) {
+        val Vaccine_Name = findViewById<View>(R.id.vaccine_name) as TextView
+        Vaccine_Name.text = value
     }
 
     private fun onBirthdaySetting(){
@@ -120,8 +142,8 @@ class RegistrationChildActivity : AppCompatActivity() {
             //入力された誕生日から誕生日を計算して反映
             val today = LocalDate.now()
             val birthday = LocalDate.parse("%s-%s-%s".format(year, month, day))
-            var Age = Period.between(birthday, today).years.toString()
-            Child_Age.setText(Age)
+            val Age = Period.between(birthday, today).years.toString()
+            Child_Age.text = Age
         }, year,month,day
         ).show()
     }
@@ -262,41 +284,55 @@ class RegistrationChildActivity : AppCompatActivity() {
         }
     }
 
-    private fun Vaccine(){
-        val VaccineNameAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineNameData)
-        val VaccineDateAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, VaccineDateData)
-        val VaccineDateList = findViewById<ListView>(R.id.VaccineDateList)
-        VaccineNameList.adapter = VaccineNameAdapter
-        VaccineDateList.adapter = VaccineDateAdapter
-        val VaccineAdd = findViewById<Button>(R.id.VaccineData_Add)
-        VaccineAdd.setOnClickListener {
-            val myedit = EditText(this)
-            val dialog = AlertDialog.Builder(this)
-            dialog.setTitle("ワクチン名を入力してください")
-            dialog.setView(myedit)
-            dialog.setPositiveButton("OK", DialogInterface.OnClickListener { _, _ ->
-                // OKボタン押したときの処理
-                val VaccineNameText = myedit.text.toString()
-                    //続いて日付の入力
-                    DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
-                        val year = y.toString()
-                        var month = (m+1).toString()
-                        var day = d.toString()
-                        if(m < 9 ){
-                            month = "0$month"
-                        }
-                        if(d < 10){
-                            day = "0$day"
-                        }
-                        VaccineNameData.add(VaccineNameText)
-                        VaccineDateData.add("%s-%s-%s".format(year, month, day))
-                    }, year,month,day
-                    ).show()
-                //ここまで日付
-            })
-            dialog.setNegativeButton("キャンセル", null)
-            dialog.show()
+    private fun VaccineName(vaccine: RealmResults<Vaccine>?): Dialog {
+        //ワクチン全ての種類数
+        val vaccineArray = vaccine!!.size
+        val VaccineNameTexts: Array<TextView?> = arrayOfNulls(vaccineArray)
+        // ダイアログ生成  AlertDialogのBuilderクラスを指定してインスタンス化します
+        val dialogBuilder = AlertDialog.Builder(this)
+
+        // リスト項目生成
+        val items = arrayOfNulls<String>(vaccineArray)
+        for (i in 0 until vaccineArray) {
+            //ダイアログ内のリストにワクチン一覧をセット
+            items[i] = vaccine[i]!!.vaccine_name
         }
+        // タイトル設定
+        dialogBuilder.setTitle("ワクチン")
+        // リスト項目を設定 & クリック時の処理を設定
+        dialogBuilder.setItems(
+            items
+        ) { _, which ->
+            // whichには選択したリスト項目の順番が入っているので、それを使用して値を取得
+            val selectedVal = items[which]
+            VaccineNameTexts[VaccineTextarray]!!.setText(selectedVal)
+            VaccineDate(vaccine,vaccineArray,VaccineNameTexts)
+        }
+        // dialogBulderを返す
+        return dialogBuilder.create()
+    }
+
+    private fun VaccineDate(vaccine: RealmResults<Vaccine>?, vaccineArray: Int, VaccineNameTexts: Array<TextView?>){
+        val layoutName: LinearLayout = findViewById(R.id.vaccine_name_array)
+        val layoutDate: LinearLayout = findViewById(R.id.vaccine_date_array)
+        val VaccineDateTexts: Array<TextView?> = arrayOfNulls(vaccineArray)
+
+        DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
+                                val year = y.toString()
+                    var month = (m+1).toString()
+                    var day = d.toString()
+                    if(m < 9 ){
+                        month = "0$month"
+                    }
+                    if(d < 10){
+                        day = "0$day"
+                    }
+                    VaccineDateTexts[VaccineTextarray]!!.setText("%s-%s-%s".format(year, month, day))
+            layoutName.addView(VaccineNameTexts[VaccineTextarray])
+            layoutDate.addView(VaccineDateTexts[VaccineTextarray])
+            VaccineTextarray = VaccineTextarray + 1
+                }, year,month,day
+                ).show()
     }
     private fun Allergy(){
         val Allergyadapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, AllergyData)
@@ -338,7 +374,7 @@ class RegistrationChildActivity : AppCompatActivity() {
                         val inputStream = contentResolver?.openInputStream(uri)
 //                        Log.i("uri表示", uri.toString())
                         val image = BitmapFactory.decodeStream(inputStream)
-                        var imageView = findViewById<ImageView>(R.id.imageView)
+                        var imageView = findViewById<ImageView>(R.id.ChildIcon)
                         imageView.setImageBitmap(image)
                         userIcon = image
                     }
@@ -398,13 +434,6 @@ class RegistrationChildActivity : AppCompatActivity() {
             "shoes_size" to child_shoesSize.editText?.text.toString()
         )
 
-        for(i in VaccineNameData){
-
-            for (l in VaccineDateData){
-
-            }
-
-        }
 
         val paramImage = arrayListOf<ApiParamImage>()
 

@@ -33,11 +33,12 @@
             android:name=".GroupSettingsActivity"
             android:label="@string/title_activity_group_setting" />
         <activity android:name=".SignUpActivity" />
+        <activity android:name=".RegistrationChildActivity"/>
         <activity android:name=".MainPostAddActivity" /> <!-- ログイン画面 -->
         <activity
             android:name=".SignInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RegistrationChildActivity">
+        <activity android:name=".StartUpActivity"> <!-- 起動時のActivity -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

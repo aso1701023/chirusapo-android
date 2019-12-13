@@ -185,6 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginBottom="20dp"
                         android:text="10以上200以下(小数点可)" />
 
                     <TextView
@@ -253,6 +254,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginBottom="20dp"
                 android:text="※必須"
                 android:textColor="@android:color/holo_red_light" />
 
@@ -287,6 +289,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginBottom="20dp"
                         android:text="5以上30以下(小数点可)" />
 
                     <TextView
@@ -315,32 +318,20 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/vaccine_name_array"
-                    android:layout_width="match_parent"
+                    android:layout_width="200dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/vaccine_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
                 <LinearLayout
                     android:id="@+id/vaccine_date_array"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/vaccine_date"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
             </LinearLayout>
 
             <TextView
@@ -367,21 +358,13 @@
                 android:id="@+id/textView15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="アイコン" />
+                android:text="アイコンを選択" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/Child_Icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/activity_checkgrowth_listbutton"
-                android:checked="false"
-                android:text="画像を選択する"
-                android:textSize="24sp" />
-
-            <ImageView
-                android:id="@+id/ChildIcon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_menu_gallery" />
 
             <Button
                 android:id="@+id/ChildAdd_Button"

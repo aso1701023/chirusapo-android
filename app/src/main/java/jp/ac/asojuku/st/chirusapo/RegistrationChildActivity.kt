@@ -5,9 +5,11 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_registration_child.*
 import java.util.*
 import android.widget.*
@@ -20,8 +22,14 @@ import kotlinx.android.synthetic.main.activity_registration_child.child_shoesSiz
 import java.time.LocalDate
 import java.time.Period
 import java.util.regex.Pattern
-import android.widget.TextView
 import io.realm.RealmResults
+import kotlinx.android.synthetic.main.activity_registration_child.birthday_error
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import java.io.IOException
+import java.lang.StringBuilder
+import java.lang.reflect.Array
+import kotlin.collections.HashMap
+import kotlin.collections.ArrayList as ArrayList1
 
 
 class RegistrationChildActivity : AppCompatActivity() {
@@ -37,17 +45,15 @@ class RegistrationChildActivity : AppCompatActivity() {
     private var vaccineArray = 0
     private var AllergyArray = 0
 
-    private var VaccineNameTexts: Array<TextView?> = arrayOfNulls(vaccineArray)
-    private var VaccineDateTexts: Array<TextView?> = arrayOfNulls(vaccineArray)
-    private val AllergyNameTexts: Array<TextView?> = arrayOfNulls(AllergyArray)
-
-    private var VaccineId:Array<Int> = arrayOf(vaccineArray)
-    private var AllergyId:Array<Int> = arrayOf(AllergyArray)
+    private var VaccineNameTexts = ArrayList<String>(vaccineArray)
+    private var VaccineDateTexts = ArrayList<String>(vaccineArray)
+    private val AllergyNameTexts = ArrayList<String>(AllergyArray)
 
     private var VaccineTextarray = 0
     private var AllergyTextarray = 0
 
     private var userIcon:Bitmap? = null
+    private val userIconRequestCode = 1000
 
     companion object {
         const val READ_REQUEST_CODE = 3
@@ -61,8 +67,8 @@ class RegistrationChildActivity : AppCompatActivity() {
 
         val vaccine = realm.where<Vaccine>().findAll()
         val allergy = realm.where<Allergy>().findAll()
-        val vaccineArray = vaccine!!.size
-        val AllergyArray = allergy.size
+        vaccineArray = vaccine!!.size
+        AllergyArray = allergy.size
 
 
         supportActionBar?.let {
@@ -135,10 +141,6 @@ class RegistrationChildActivity : AppCompatActivity() {
     }
 
 
-//    private fun setTextView(value: String) {
-//        val Vaccine_Name = findViewById<View>(R.id.vaccine_name) as TextView
-//        Vaccine_Name.text = value
-//    }
 
     private fun onBirthdaySetting(){
         val birthday = findViewById<EditText>(R.id.Child_Birthday)
@@ -299,6 +301,8 @@ class RegistrationChildActivity : AppCompatActivity() {
     }
 
     private fun VaccineName(vaccine: RealmResults<Vaccine>): Dialog {
+        val layoutName: LinearLayout = findViewById(R.id.vaccine_name_array)
+        val text_vaccineName = TextView(this)
         // ダイアログ生成  AlertDialogのBuilderクラスを指定してインスタンス化します
         val dialogBuilder = AlertDialog.Builder(this)
 
@@ -316,20 +320,19 @@ class RegistrationChildActivity : AppCompatActivity() {
         ) { _, which ->
             // whichには選択したリスト項目の順番が入っているので、それを使用して値を取得
             val selectedVal = items[which]
-            VaccineNameTexts[VaccineTextarray]!!.text = selectedVal
+            text_vaccineName.text = items[which]
+            VaccineNameTexts.add(selectedVal.toString())
             VaccineDate(VaccineNameTexts,which)
+            layoutName.addView(text_vaccineName,LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT))
         }
         // dialogBulderを返す
         return dialogBuilder.create()
     }
 
-    private fun VaccineDate(
-        VaccineNameTexts: Array<TextView?>,
-        which: Int
-    ) {
-        val layoutName: LinearLayout = findViewById(R.id.vaccine_name_array)
-        val layoutDate: LinearLayout = findViewById(R.id.vaccine_date_array)
 
+    private fun VaccineDate(VaccineNameTexts: ArrayList<String>,which: Int) {
+        val layoutDate: LinearLayout = findViewById(R.id.vaccine_date_array)
+        val text_vaccineDate = TextView(this)
         DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
                                 val year = y.toString()
                     var month = (m+1).toString()
@@ -340,16 +343,18 @@ class RegistrationChildActivity : AppCompatActivity() {
                     if(d < 10){
                         day = "0$day"
                     }
-            VaccineDateTexts[VaccineTextarray]!!.text = "%s-%s-%s".format(year, month, day)
-            layoutName.addView(VaccineNameTexts[VaccineTextarray])
-            layoutDate.addView(VaccineDateTexts[VaccineTextarray])
-            VaccineId[VaccineTextarray] = which
+
+            VaccineDateTexts.add("%s-%s-%s".format(year, month, day))
+            text_vaccineDate.text = "%s-%s-%s".format(year, month, day)
+            layoutDate.addView(text_vaccineDate,LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT))
+
             VaccineTextarray += 1
                 }, year,month,day
                 ).show()
     }
     private fun Allergy(allergy: RealmResults<Allergy>):Dialog{
         val layoutAllergy: LinearLayout = findViewById(R.id.AllergyList)
+        val text_allergyName = TextView(this)
         // ダイアログ生成  AlertDialogのBuilderクラスを指定してインスタンス化します
         val dialogBuilder = AlertDialog.Builder(this)
 
@@ -367,46 +372,56 @@ class RegistrationChildActivity : AppCompatActivity() {
         ) { _, which ->
             // whichには選択したリスト項目の順番が入っているので、それを使用して値を取得
             val selectedVal = items[which]
-            AllergyNameTexts[AllergyTextarray]!!.text = selectedVal
-            layoutAllergy.addView(AllergyNameTexts[AllergyTextarray])
-            AllergyId[AllergyTextarray] = which
+            AllergyNameTexts.add(selectedVal.toString())
+            text_allergyName.text = selectedVal
+            layoutAllergy.addView(text_allergyName,LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT))
             AllergyTextarray += 1
         }
         // dialogBulderを返す
         return dialogBuilder.create()
 
     }
+    @Throws(IOException::class)
+    private fun getBitmapFromUri(uri: Uri): Bitmap {
+        val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
+        val fileDescriptor = parcelFileDescriptor!!.fileDescriptor
+        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image
+    }
+
 
     //画像選択の為にライブラリを開く
     private fun selectPhoto(){
-        val ChildIcon = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/*"
-        }
-        startActivityForResult(ChildIcon, READ_REQUEST_CODE)
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, userIconRequestCode)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
-        super.onActivityResult(requestCode, resultCode, resultData)
-        if (resultCode != RESULT_OK) {
-            return
-        }
-        when (requestCode) {
-            READ_REQUEST_CODE -> {
-                try {
-                    resultData?.data?.also { uri ->
-                        val inputStream = contentResolver?.openInputStream(uri)
-//                        Log.i("uri表示", uri.toString())
-                        val image = BitmapFactory.decodeStream(inputStream)
-                        var imageView = findViewById<ImageView>(R.id.ChildIcon)
-                        imageView.setImageBitmap(image)
-                        userIcon = image
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK) {
+            if (data != null) {
+                when (requestCode) {
+                    userIconRequestCode -> {
+                        val uri = data.data as Uri
+                        try {
+                            val bitmap: Bitmap = getBitmapFromUri(uri)
+                            userIcon = bitmap
+                            Child_Icon.apply {
+                                setImageBitmap(bitmap)
+                                scaleType = ImageView.ScaleType.FIT_CENTER
+                            }
+                        } catch (e: IOException) {
+                            Toast.makeText(this, "画像を取得できませんでした", Toast.LENGTH_SHORT).show()
+                            e.printStackTrace()
+                        }
                     }
-                } catch (e: Exception) {
-                    Toast.makeText(this, "エラーが発生しました", Toast.LENGTH_LONG).show()
                 }
             }
-
         }
     }
 
@@ -436,13 +451,18 @@ class RegistrationChildActivity : AppCompatActivity() {
             }
         }
         if(!check)return
+            val paramImage = arrayListOf<ApiParamImage>()
+        if(userIcon != null){
+            val paramItem = ApiParamImage("image/jpg","Child01.jpg","user_icon",userIcon!!)
+            paramImage.add(paramItem)
+        }
 
         val account: Account? = realm.where<Account>().findFirst()
         val JoinGroup: JoinGroup? = realm.where<JoinGroup>().findFirst()
         val group_id = JoinGroup!!.Rgroup_id
         val token = account!!.Rtoken
 
-        //TODO ワクチン、アレルギー、アイコン情報の追加
+        //TODO ワクチン、アレルギー情報の追加
         val params = hashMapOf(
             "token" to token,
             "group_id" to group_id,
@@ -456,27 +476,21 @@ class RegistrationChildActivity : AppCompatActivity() {
             "body_weight" to Child_Weight.editText?.text.toString(),
             "clothes_size" to child_clothesSize.toString(),
             "shoes_size" to child_shoesSize.editText?.text.toString()
-
         )
-        val vaccination = Array(VaccineTextarray,{arrayOfNulls<String>(2)})
+        
 
-        val paramArray = hashMapOf(
-            "vaccination" to vaccination
-        )
-
-        for (i in 0 until VaccineTextarray){
-            vaccination[i][0] = VaccineNameTexts[i].toString()
-            vaccination[i][1] = VaccineDateTexts[i].toString()
-            if(i == VaccineTextarray){
-                paramArray
-            }
-        }
-
-
-        val paramImage = arrayListOf<ApiParamImage>()
-
-        val paramItem = ApiParamImage("image/jpg","Child01.jpg","user_icon",userIcon!!)
-        paramImage.add(paramItem)
+//
+//        val paramArray = mutableMapOf(
+//            "vaccination" to vaccination
+//        )
+//
+//        for (i in 0 until VaccineTextarray){
+//            vaccination[i][0] = VaccineNameTexts[i]
+//            vaccination[i][1] = VaccineDateTexts[i]
+//            if(i == VaccineTextarray){
+//                paramArray
+//            }
+//        }
 
         ApiPostTask{
             if(it == null){
@@ -486,7 +500,6 @@ class RegistrationChildActivity : AppCompatActivity() {
             else{
                 when(it.getString("status")){
                     "200" -> {
-                        // TODO realmにワクチン、アレルギーの登録
                         Toast.makeText(applicationContext, "登録しました", Toast.LENGTH_SHORT).show()
 //                        val intent = Intent(this, CheckGrowthActivity::class.java).apply {
 //                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -541,9 +554,11 @@ class RegistrationChildActivity : AppCompatActivity() {
                                 }
                                 ApiError.VALIDATION_VACCINATION -> {
                                     ApiError.showToast(this,errorArray.getString(i), Toast.LENGTH_LONG)
+                                    Toast.makeText(applicationContext, "ワクチン情報登録エラー", Toast.LENGTH_SHORT).show()
                                 }
                                 ApiError.VALIDATION_ALLERGY -> {
                                     ApiError.showToast(this,errorArray.getString(i), Toast.LENGTH_LONG)
+                                    Toast.makeText(applicationContext, "アレルギー登録エラー", Toast.LENGTH_SHORT).show()
                                 }
                                 ApiError.ALLOW_EXTENSION -> {
                                     ApiError.showToast(this,errorArray.getString(i), Toast.LENGTH_LONG)

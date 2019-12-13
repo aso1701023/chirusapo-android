@@ -477,7 +477,7 @@ class RegistrationChildActivity : AppCompatActivity() {
             "clothes_size" to child_clothesSize.toString(),
             "shoes_size" to child_shoesSize.editText?.text.toString()
         )
-        
+
 
 //
 //        val paramArray = mutableMapOf(

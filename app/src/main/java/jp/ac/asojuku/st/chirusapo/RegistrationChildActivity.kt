@@ -478,19 +478,20 @@ class RegistrationChildActivity : AppCompatActivity() {
             "shoes_size" to child_shoesSize.editText?.text.toString()
         )
 
+        val vaccination = kotlin.collections.ArrayList
 
-//
-//        val paramArray = mutableMapOf(
-//            "vaccination" to vaccination
-//        )
-//
-//        for (i in 0 until VaccineTextarray){
-//            vaccination[i][0] = VaccineNameTexts[i]
-//            vaccination[i][1] = VaccineDateTexts[i]
-//            if(i == VaccineTextarray){
-//                paramArray
-//            }
-//        }
+
+        val paramArray = mutableMapOf(
+            "vaccination" to vaccination
+        )
+
+        for (i in 0 until VaccineTextarray){
+            vaccination[i][0] = VaccineNameTexts[i]
+            vaccination[i][1] = VaccineDateTexts[i]
+            if(i == VaccineTextarray){
+                paramArray
+            }
+        }
 
         ApiPostTask{
             if(it == null){
@@ -577,7 +578,7 @@ class RegistrationChildActivity : AppCompatActivity() {
         }.execute(
             ApiParam(
                 Api.SLIM + "child/add",
-                params,paramImage
+                params,paramImage,paramArray
             )
         )
 

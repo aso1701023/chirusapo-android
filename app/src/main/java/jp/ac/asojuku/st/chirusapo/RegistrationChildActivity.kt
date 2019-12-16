@@ -486,9 +486,9 @@ class RegistrationChildActivity : AppCompatActivity() {
         for (i in 0 until VaccineTextarray){
             vaccination[i][0] = VaccineNameTexts[i]
             vaccination[i][1] = VaccineDateTexts[i]
-            if(i == VaccineTextarray){
-                paramArray
-            }
+//                paramArray.put(
+//                    "vaccine_name"
+//                )
         }
 
         ApiPostTask{

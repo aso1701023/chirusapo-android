@@ -35,7 +35,7 @@ class ListofFriendActivity : AppCompatActivity() {
         super.onResume()
         friend_gender.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val spinner = findViewById<Spinner>(R.id.Child_gender)
+                val spinner = findViewById<Spinner>(R.id.friend_gender)
                 when (spinner.selectedItem.toString()) {
                     "男性" -> gender = 1
                     "女性" -> gender = 2

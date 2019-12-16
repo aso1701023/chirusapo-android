@@ -1,5 +1,6 @@
 package jp.ac.asojuku.st.chirusapo
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,21 +8,24 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_registration_friend.*
 import java.io.IOException
+import java.util.*
 
 class RegistrationFriendActivity : AppCompatActivity() {
     lateinit var realm:Realm
 
     private var gender = 0
+    private val calender = Calendar.getInstance()
+    private val year = calender.get(Calendar.YEAR)
+    private val month = calender.get(Calendar.MONTH)
+    private val day = calender.get(Calendar.DAY_OF_MONTH)
 
     private var Friend_Icon:Bitmap? = null
     private val friendIconRequestCode = 1000
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,14 @@ class RegistrationFriendActivity : AppCompatActivity() {
 
         realm = Realm.getDefaultInstance()
         Friend_Add.setOnClickListener { onFriendAdd() }
+
+        supportActionBar?.let {
+            it.title = "友達情報追加"
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeButtonEnabled(true)
+        }
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -48,15 +59,19 @@ class RegistrationFriendActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
     }
+
+
     @Throws(IOException::class)
     private fun getBitmapFromUri(uri: Uri): Bitmap {
         val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")
@@ -99,7 +114,27 @@ class RegistrationFriendActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
+    private fun onFriendBirthdaySettting(){
+        val birthday = findViewById<EditText>(R.id.Friend_Birthday)
+        DatePickerDialog(this, DatePickerDialog.OnDateSetListener{ _, y, m, d ->
+            val year = y.toString()
+            var month = (m+1).toString()
+            var day = d.toString()
+            if(m < 9 ){
+                month = "0$month"
+            }
+            if(d < 10){
+                day = "0$day"
+            }
+            birthday.setText("%s-%s-%s".format(year, month, day))
+        }, year,month,day
+        ).show()
+    }
+
+
     private fun onFriendAdd(){}
+
 }

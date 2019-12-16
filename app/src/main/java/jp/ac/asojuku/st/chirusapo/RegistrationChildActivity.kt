@@ -140,8 +140,6 @@ class RegistrationChildActivity : AppCompatActivity() {
         }
     }
 
-
-
     private fun onBirthdaySetting(){
         val birthday = findViewById<EditText>(R.id.Child_Birthday)
         DatePickerDialog(this,DatePickerDialog.OnDateSetListener{ _, y, m, d ->
@@ -478,7 +476,7 @@ class RegistrationChildActivity : AppCompatActivity() {
             "shoes_size" to child_shoesSize.editText?.text.toString()
         )
 
-        val vaccination = kotlin.collections.ArrayList
+        val vaccination = Array(VaccineTextarray) {arrayOfNulls<String>(2)}
 
 
         val paramArray = mutableMapOf(
@@ -578,7 +576,7 @@ class RegistrationChildActivity : AppCompatActivity() {
         }.execute(
             ApiParam(
                 Api.SLIM + "child/add",
-                params,paramImage,paramArray
+                params,paramImage
             )
         )
 

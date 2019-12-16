@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".ListFriendActivity"></activity>
         <activity android:name=".RegistrationWeightHeightActivity" />
         <activity android:name=".ChildTimeLinePostAdd" />
         <activity android:name=".ChildGraffActivity" />
@@ -43,7 +44,7 @@
             android:name=".GroupSettingsActivity"
             android:label="@string/title_activity_group_setting" />
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".RegistrationChildActivity"/>
+        <activity android:name=".RegistrationChildActivity" />
         <activity android:name=".MainPostAddActivity" /> <!-- ログイン画面 -->
         <activity
             android:name=".SignInActivity"
@@ -57,6 +58,7 @@
         </activity>
         <activity android:name=".CheckProfileActivity" />
         <activity android:name=".TryonActivity" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

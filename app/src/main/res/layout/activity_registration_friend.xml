@@ -73,12 +73,11 @@
                 android:hint="メモ"
                 android:inputType="textPersonName" />
 
-            <Button
-                android:id="@+id/Friend_Icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/design_default_color_background"
-                android:text="アイコン" />
+            <ImageButton
+                android:id="@+id/ChildIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/ic_menu_gallery" />
 
             <ImageView
                 android:id="@+id/imageView"

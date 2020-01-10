@@ -29,7 +29,7 @@ class ChangeChildActivity : AppCompatActivity() {
     lateinit var realm: Realm
 
     private var vaccineArray = 0
-    private var AllergyArray = 0
+    private var allergyArray = 0
 
     private val calender = Calendar.getInstance()
     private val year = calender.get(Calendar.YEAR)
@@ -38,7 +38,7 @@ class ChangeChildActivity : AppCompatActivity() {
 
     private var VaccineNameTexts = ArrayList<String>(vaccineArray)
     private var VaccineDateTexts = ArrayList<String>(vaccineArray)
-    private val AllergyNameTexts = ArrayList<String>(AllergyArray)
+    private val AllergyNameTexts = ArrayList<String>(allergyArray)
 
     private var VaccineTextarray = 0
     private var AllergyTextarray = 0
@@ -59,7 +59,7 @@ class ChangeChildActivity : AppCompatActivity() {
 
         realm = Realm.getDefaultInstance()
         vaccineArray = vaccine!!.size
-        AllergyArray = allergy.size
+        allergyArray = allergy.size
 
         supportActionBar?.let {
             it.title = "子供情報変更"
@@ -151,8 +151,8 @@ class ChangeChildActivity : AppCompatActivity() {
         val dialogBuilder = AlertDialog.Builder(this)
 
         // リスト項目生成
-        val items = arrayOfNulls<String>(AllergyArray)
-        for (i in 0 until AllergyArray) {
+        val items = arrayOfNulls<String>(allergyArray)
+        for (i in 0 until allergyArray) {
             //ダイアログ内のリストにワクチン一覧をセット
             items[i] = allergy[i]!!.allergy_name
         }
@@ -231,6 +231,7 @@ class ChangeChildActivity : AppCompatActivity() {
             return
         }
 
+//        TODO ワクチン、アレルギーの配列追加送信処理
         val account: Account? = realm.where<Account>().findFirst()
         val childId = intent.getStringExtra("user_id")
         val token = account!!.Rtoken
@@ -248,6 +249,7 @@ class ChangeChildActivity : AppCompatActivity() {
                 when(it.getString("status")){
                     "200" -> {
                         Toast.makeText(applicationContext,"変更しました",Toast.LENGTH_SHORT).show()
+
                     }
                     "400" -> {
                         val errorArray = it.getJSONArray("message")
@@ -286,7 +288,7 @@ class ChangeChildActivity : AppCompatActivity() {
                 }
             }
         }.execute(
-
+//            TODO 送信するデータとその送信先
         )
     }
 

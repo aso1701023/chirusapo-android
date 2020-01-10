@@ -138,6 +138,7 @@ class RegistrationChildActivity : AppCompatActivity() {
                 bloodType = 0
             }
         }
+//        TODO 既存データの受け取りと表示
     }
 
     private fun onBirthdaySetting(){

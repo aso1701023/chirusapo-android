@@ -138,6 +138,8 @@ class RegistrationFriendActivity : AppCompatActivity() {
     }
 
 
-    private fun onFriendAdd(){}
+    private fun onFriendAdd(){
+
+    }
 
 }

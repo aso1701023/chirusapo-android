@@ -16,10 +16,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.kotlin.where
 import jp.ac.asojuku.st.chirusapo.R.id.vaccine_date_array
-import jp.ac.asojuku.st.chirusapo.apis.Api
-import jp.ac.asojuku.st.chirusapo.apis.ApiError
-import jp.ac.asojuku.st.chirusapo.apis.ApiParamImage
-import jp.ac.asojuku.st.chirusapo.apis.ApiPostTask
+import jp.ac.asojuku.st.chirusapo.apis.*
 import kotlinx.android.synthetic.main.activity_change_child.*
 import java.io.IOException
 import java.util.*
@@ -87,6 +84,11 @@ class ChangeChildActivity : AppCompatActivity() {
         ChangeButton.setOnClickListener {
             onChildChange()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        
     }
 
     private fun VaccineName(vaccine: RealmResults<Vaccine>): Dialog {
@@ -221,7 +223,7 @@ class ChangeChildActivity : AppCompatActivity() {
     }
 
     private fun onChildChange(){
-
+//        変更点があるかチェック
         var check = false
         if(VaccineFLG)check = true
         if(AllergyFLG)check = true
@@ -249,7 +251,6 @@ class ChangeChildActivity : AppCompatActivity() {
                 when(it.getString("status")){
                     "200" -> {
                         Toast.makeText(applicationContext,"変更しました",Toast.LENGTH_SHORT).show()
-
                     }
                     "400" -> {
                         val errorArray = it.getJSONArray("message")

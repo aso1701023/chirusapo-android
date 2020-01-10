@@ -72,6 +72,9 @@ class RegistrationFriendActivity : AppCompatActivity() {
     }
 
 
+    private fun onoFriendNameCheck(){}
+
+
     @Throws(IOException::class)
     private fun getBitmapFromUri(uri: Uri): Bitmap {
         val parcelFileDescriptor = contentResolver.openFileDescriptor(uri, "r")

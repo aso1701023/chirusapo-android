@@ -21,15 +21,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".RegistrationFriendActivity"></activity>
-        <activity android:name=".ChangeChildActivity" /> <!-- <activity android:name=".apis.RegistrationFriendActivity" /> -->
-        <!-- <activity android:name=".ListFriendActivity" /> -->
+        <activity android:name=".RegistrationChildActivity" />
         <activity android:name=".RegistrationWeightHeightActivity" />
         <activity android:name=".CalendarAddActivity" />
         <activity android:name=".CalendarEditActivity" />
         <activity android:name=".CalendarViewActivity" />
         <activity android:name=".ChildTimeLinePostAdd" />
-        <activity android:name=".ChildGraffActivity" />
+        <activity android:name=".ChildGraphActivity" />
         <activity android:name=".ListofFriendActivity" />
         <activity android:name=".CheckGrowthActivity" />
         <activity android:name=".TryonSelectChildActivity" />
@@ -49,12 +47,11 @@
             android:name=".GroupSettingsActivity"
             android:label="@string/title_activity_group_setting" />
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".RegistrationChildActivity" />
         <activity android:name=".MainPostAddActivity" /> <!-- ログイン画面 -->
         <activity
             android:name=".SignInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".StartUpActivity"> <!-- 起動時のActivity -->
+        <activity android:name=".StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -88,7 +88,7 @@ class ChangeChildActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        
+
     }
 
     private fun VaccineName(vaccine: RealmResults<Vaccine>): Dialog {
